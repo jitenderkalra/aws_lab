@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: IMAGE_PLACEHOLDER
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8081
+  nodePort: 30080
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

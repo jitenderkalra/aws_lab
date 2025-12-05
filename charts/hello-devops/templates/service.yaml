@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hello-devops.fullname" . }}
+  labels:
+    app: {{ include "hello-devops.name" . }}
+    chart: {{ include "hello-devops.chart" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ include "hello-devops.name" . }}
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      nodePort: {{ .Values.service.nodePort }}

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hello-devops.fullname" . }}
+  labels:
+    app: {{ include "hello-devops.name" . }}
+    chart: {{ include "hello-devops.chart" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "hello-devops.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "hello-devops.name" . }}
+    spec:
+      containers:
+        - name: {{ include "hello-devops.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8081

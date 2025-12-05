@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-devops
+  labels:
+    app: hello-devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-devops
+  template:
+    metadata:
+      labels:
+        app: hello-devops
+    spec:
+      containers:
+        - name: hello-devops
+          image: IMAGE_PLACEHOLDER
+          ports:
+            - containerPort: 8081
