@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    AWS_REGION = "eu-north-1"
+    AWS_REGION = "us-east-1"
     ECR_ACCOUNT = "620356661348"
     ECR_REPO = "hello-devops"
     IMAGE_TAG = "${env.BUILD_NUMBER}"
