@@ -50,9 +50,9 @@ data "aws_ami" "ubuntu" {
 }
 
 locals {
-  subnet_id      = tolist(data.aws_subnets.default.ids)[0]
-  ecr_repo_name  = "hello-devops"
-  instance_name  = "devops-jenkins-k3s"
+  subnet_id            = tolist(data.aws_subnets.default.ids)[0]
+  ecr_repo_name        = "hello-devops"
+  instance_name_prefix = "devops-jenkins-k3s"
 }
 
 resource "aws_security_group" "devops" {
@@ -92,7 +92,7 @@ resource "aws_security_group" "devops" {
   }
 
   tags = {
-    Name = local.instance_name
+    Name = local.instance_name_prefix
   }
 }
 
@@ -136,6 +136,8 @@ resource "aws_ecr_repository" "app" {
 }
 
 resource "aws_instance" "devops" {
+  count = var.instance_count
+
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
   subnet_id                   = local.subnet_id
@@ -165,25 +167,27 @@ resource "aws_instance" "devops" {
             EOF
 
   tags = {
-    Name = local.instance_name
+    Name = format("%s-%02d", local.instance_name_prefix, count.index + 1)
   }
 }
 
 resource "aws_eip" "devops" {
+  count  = var.instance_count
   domain = "vpc"
   tags = {
-    Name = "${local.instance_name}-eip"
+    Name = format("%s-%02d-eip", local.instance_name_prefix, count.index + 1)
   }
 }
 
 resource "aws_eip_association" "devops" {
-  instance_id   = aws_instance.devops.id
-  allocation_id = aws_eip.devops.id
+  count         = var.instance_count
+  instance_id   = aws_instance.devops[count.index].id
+  allocation_id = aws_eip.devops[count.index].id
 }
 
 output "public_ip" {
   description = "Public IP of the Jenkins/k3s host"
-  value       = aws_eip.devops.public_ip
+  value       = aws_eip.devops[*].public_ip
 }
 
 output "ecr_repository_url" {

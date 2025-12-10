@@ -66,12 +66,6 @@
       args:
         creates: /usr/share/keyrings/jenkins-keyring.asc
 
-    - name: Add Jenkins apt key
-      shell: |
-        curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
-      args:
-        creates: /usr/share/keyrings/jenkins-keyring.asc
-
     - name: Add Jenkins apt repository (manual file)
       copy:
         dest: /etc/apt/sources.list.d/jenkins.list
