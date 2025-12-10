@@ -6,9 +6,10 @@ pipeline {
     ECR_ACCOUNT = "620356661348"
     ECR_REPO = "hello-devops"
     IMAGE_TAG = "${env.BUILD_NUMBER}"
-    KUBECONFIG = "/var/lib/jenkins/.kube/config"
+    KUBECONFIG = "/home/ubuntu/.kube/config"
     HELM_RELEASE = "hello-devops"
-    CHART_DIR = "charts/hello-devops"
+    CHART_DIR = "${env.WORKSPACE}/charts/hello-devops"
+    IMAGE_PULL_SECRET = "ecr-creds"
   }
 
   stages {
@@ -49,9 +50,11 @@ pipeline {
 
             # Deploy via Helm
             helm upgrade --install "${HELM_RELEASE}" "${CHART_DIR}" \
+              --kubeconfig "${KUBECONFIG}" \
               --namespace devops --create-namespace \
               --set image.repository="${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}" \
               --set image.tag="${IMAGE_TAG}" \
+              --set imagePullSecrets[0].name="${IMAGE_PULL_SECRET}" \
               --set service.nodePort=30080 \
               --set service.type=NodePort \
               --debug
